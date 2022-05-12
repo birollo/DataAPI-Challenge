@@ -1,11 +1,9 @@
 package com.swisscom.DataAPIChallenge.controller;
 
-
 import com.swisscom.DataAPIChallenge.model.Customer;
 import com.swisscom.DataAPIChallenge.model.Dialog;
 import com.swisscom.DataAPIChallenge.service.CustomerService;
 import com.swisscom.DataAPIChallenge.service.DialogService;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,22 +12,22 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class MainController {
 
     private final DialogService dialogService;
     private final CustomerService customerService;
+    private final DataAPIExceptionHandler dataAPIExceptionHandler;
 
-    public MainController(DialogService dialogService, CustomerService customerService){
+    public MainController(DialogService dialogService, CustomerService customerService, DataAPIExceptionHandler dataAPIExceptionHandler){
         this.dialogService = dialogService;
         this.customerService = customerService;
+        this.dataAPIExceptionHandler = dataAPIExceptionHandler;
     }
 
     @PostMapping("/data/{customerId}/{dialogId}")
-    public ResponseEntity<String> dataAPIText(@PathVariable String customerId, @PathVariable String dialogId, @RequestBody Map<String, String> payload) {
-        //featch JSON
+    public ResponseEntity<Object> dataAPIText(@PathVariable String customerId, @PathVariable String dialogId, @RequestBody Map<String, String> payload) {
         String text = payload.get("text");
         String language = payload.get("language");
 
@@ -54,7 +52,7 @@ public class MainController {
     }
 
     @PostMapping("/consent/{dialogId}")
-    public void dataAPIConsent(@PathVariable String dialogId, @RequestBody String payload) {
+    public ResponseEntity<Object> dataAPIConsent(@PathVariable String dialogId, @RequestBody String payload) {
         boolean consent = Boolean.parseBoolean(payload);
         if (dialogService.getById(dialogId).isPresent()){
             Dialog dialog = dialogService.getById(dialogId).get();
@@ -64,32 +62,31 @@ public class MainController {
             }else {
                 dialogService.delete(dialog);
             }
+            return ResponseEntity.ok().build();
+        }else {
+            return dataAPIExceptionHandler.handlerException(HttpStatus.NOT_FOUND, "Impossible to find a dialog with id=" +dialogId);
         }
     }
 
     @GetMapping(value={"/data/{customerId}", "/data/?language={language}"})
-    public List<String> getDataFromCustomer(@PathVariable(required = false) String customerId, @PathVariable(required = false) String language) throws Exception{
-        List<Dialog> dialogList = new ArrayList<>();
-        if (customerId != null){
-            if (customerService.getById(customerId).isPresent()){
-                Customer customer = customerService.getById(customerId).get();
-                dialogList = dialogService.getAllByCustomerIdOrderByDateTime(customer);
-            } else {
-                throw new Exception("a customer with this ID ("+ customerId + ") has already been saved");
-            }
+    public ResponseEntity<Object> getDataFromCustomer(@PathVariable(required = false) String customerId, @PathVariable(required = false) String language){
+        Customer customer;
+        if (customerService.getById(customerId).isPresent()){
+            customer = customerService.getById(customerId).get();
+        } else {
+            return dataAPIExceptionHandler.handlerException(HttpStatus.NOT_FOUND, "Impossible to find a customer with id=" +customerId);
         }
+        List<Dialog> dialogList= dialogService.getAllByCustomerIdOrderByDateTime(customer);
 
         if (language != null){
             dialogList = dialogService.getAllByLanguageOrderByDateTime(language);
         }
-
         List<String> dialogListWithConsent = new ArrayList<>();
         for (Dialog d : dialogList){
             if (d.isConsent()){
                 dialogListWithConsent.add(d.toString());
             }
         }
-
-        return dialogListWithConsent;
+        return ResponseEntity.status(HttpStatus.OK).body(dialogListWithConsent);
     }
 }
