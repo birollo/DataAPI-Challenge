@@ -1,0 +1,5 @@
+# Dev Environment specific variables substituted in manifest.yml
+env: dev
+subdomain: CloudFoundryDomanin
+docker_username: DockerTechicalUser
+target: dev

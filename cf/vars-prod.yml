@@ -1,0 +1,5 @@
+# Prod Environment specific variables substituted in manifest.yml
+env: prod
+subdomain: CloudFoundryDomanin
+docker_username: DockerTechicalUser
+target: prod

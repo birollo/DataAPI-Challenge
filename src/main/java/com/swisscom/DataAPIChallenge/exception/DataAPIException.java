@@ -1,4 +1,4 @@
-package com.swisscom.DataAPIChallenge;
+package com.swisscom.DataAPIChallenge.exception;
 
 import org.springframework.http.HttpStatus;
 
