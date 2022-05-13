@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 
 @ExtendWith(MockitoExtension.class)
-class DataApiChallengeApplicationTests {
+class MainControllerTest {
 
 	@Mock
 	private MainController mainController;
