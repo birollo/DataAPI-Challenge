@@ -2,13 +2,13 @@ package com.swisscom.DataAPIChallenge.repository;
 
 import com.swisscom.DataAPIChallenge.model.Customer;
 import com.swisscom.DataAPIChallenge.model.Dialog;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import com.swisscom.DataAPIChallenge.model.Language;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface DialogRepository extends PagingAndSortingRepository<Dialog, String> {
-    List<Dialog> getAllByLanguageOrderByDateTime(String language);
+public interface DialogRepository extends JpaRepository<Dialog, String> {
+    List<Dialog> getAllByLanguageOrderByDateTime(Language language);
 
     List<Dialog> getAllByCustomerOrderByDateTime(Customer customer);
 }

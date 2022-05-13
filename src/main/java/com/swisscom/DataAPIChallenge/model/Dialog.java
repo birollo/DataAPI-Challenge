@@ -13,7 +13,8 @@ public class Dialog {
     @Id
     private String dialogId;
 
-    private String language;
+    @Enumerated(EnumType.STRING)
+    private Language language;
 
     private String text;
 
@@ -28,7 +29,7 @@ public class Dialog {
     public Dialog() {
     }
 
-    public Dialog(String dialogId,String language, String text, LocalDateTime dateTime,boolean consent, Customer customer) {
+    public Dialog(String dialogId,Language language, String text, LocalDateTime dateTime,boolean consent, Customer customer) {
         this.dialogId = dialogId;
         this.language = language;
         this.text = text;
@@ -45,11 +46,11 @@ public class Dialog {
         this.dialogId = dialogId;
     }
 
-    public String getLanguage() {
+    public Language getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Language language) {
         this.language = language;
     }
 

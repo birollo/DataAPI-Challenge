@@ -3,6 +3,7 @@ package com.swisscom.DataAPIChallenge.service;
 
 import com.swisscom.DataAPIChallenge.model.Customer;
 import com.swisscom.DataAPIChallenge.model.Dialog;
+import com.swisscom.DataAPIChallenge.model.Language;
 import com.swisscom.DataAPIChallenge.repository.DialogRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,8 @@ public class DialogService {
         return dialogRepository.findById(dialogId);
     }
 
-    public Dialog save(Dialog dialog){
-        return dialogRepository.save(dialog);
+    public void save(Dialog dialog){
+        dialogRepository.save(dialog);
     }
 
     public void delete(Dialog dialog){
@@ -33,7 +34,7 @@ public class DialogService {
     public List<Dialog> getAllByCustomerIdOrderByDateTime(Customer customer){
         return dialogRepository.getAllByCustomerOrderByDateTime(customer);
     }
-    public List<Dialog> getAllByLanguageOrderByDateTime(String language){
+    public List<Dialog> getAllByLanguageOrderByDateTime(Language language){
         return dialogRepository.getAllByLanguageOrderByDateTime(language);
     }
 }

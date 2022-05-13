@@ -2,6 +2,7 @@ package com.swisscom.DataAPIChallenge.controller;
 
 import com.swisscom.DataAPIChallenge.model.Customer;
 import com.swisscom.DataAPIChallenge.model.Dialog;
+import com.swisscom.DataAPIChallenge.model.Language;
 import com.swisscom.DataAPIChallenge.service.CustomerService;
 import com.swisscom.DataAPIChallenge.service.DialogService;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class MainController {
     @PostMapping("/data/{customerId}/{dialogId}")
     public ResponseEntity<Object> dataAPIText(@PathVariable String customerId, @PathVariable String dialogId, @RequestBody Map<String, String> payload) {
         String text = payload.get("text");
-        String language = payload.get("language");
+        Language language = Language.valueOf(payload.get("language"));
 
         Customer customer;
         if(customerService.getById(customerId).isPresent()){
@@ -79,7 +80,7 @@ public class MainController {
         List<Dialog> dialogList= dialogService.getAllByCustomerIdOrderByDateTime(customer);
 
         if (language != null){
-            dialogList = dialogService.getAllByLanguageOrderByDateTime(language);
+            dialogList = dialogService.getAllByLanguageOrderByDateTime( Language.valueOf(language));
         }
         List<String> dialogListWithConsent = new ArrayList<>();
         for (Dialog d : dialogList){
