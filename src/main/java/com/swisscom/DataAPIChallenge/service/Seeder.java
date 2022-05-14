@@ -5,10 +5,7 @@ import com.swisscom.DataAPIChallenge.model.Dialog;
 import com.swisscom.DataAPIChallenge.model.Language;
 import com.swisscom.DataAPIChallenge.repository.CustomerRepository;
 import com.swisscom.DataAPIChallenge.repository.DialogRepository;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

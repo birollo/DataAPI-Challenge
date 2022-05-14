@@ -19,12 +19,16 @@ public class DialogService {
         this.dialogRepository = dialogRepository;
     }
 
-    public Optional<Dialog> getById(String dialogId){
-        return dialogRepository.findById(dialogId);
+    public Dialog getById(String dialogId){
+        if (dialogRepository.findById(dialogId).isPresent()){
+            return dialogRepository.findById(dialogId).get();
+        }else {
+            return null;
+        }
     }
 
-    public void save(Dialog dialog){
-        dialogRepository.save(dialog);
+    public Dialog save(Dialog dialog){
+        return dialogRepository.save(dialog);
     }
 
     public void delete(Dialog dialog){

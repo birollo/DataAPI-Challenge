@@ -33,14 +33,14 @@ public class MainController {
         Language language = Language.valueOf(payload.get("language"));
 
         Customer customer;
-        if(customerService.getById(customerId).isPresent()){
-            customer = customerService.getById(customerId).get();
+        if(customerService.getById(customerId) != null){
+            customer = customerService.getById(customerId);
         }else {
             customer = new Customer();
             customer.setCustomerId(customerId);
         }
 
-        if (dialogService.getById(dialogId).isPresent()){
+        if (dialogService.getById(dialogId) != null){
             return ResponseEntity.badRequest().body("a dialogue with this ID ("+ dialogId + ") has already been saved");
         }
         Dialog dialog = new Dialog(dialogId,language, text, LocalDateTime.now(), false, customer );
@@ -55,13 +55,14 @@ public class MainController {
     @PostMapping("/consent/{dialogId}")
     public ResponseEntity<Object> dataAPIConsent(@PathVariable String dialogId, @RequestBody String payload) {
         boolean consent = Boolean.parseBoolean(payload);
-        if (dialogService.getById(dialogId).isPresent()){
-            Dialog dialog = dialogService.getById(dialogId).get();
+        if (dialogService.getById(dialogId) != null){
+            Dialog dialog = dialogService.getById(dialogId);
             if (consent){
                 dialog.setConsent(true);
                 dialogService.save(dialog);
             }else {
-                dialogService.delete(dialog);
+                Customer c = customerService.getById(dialog.getCustomer().getCustomerId());
+                customerService.delete(c);
             }
             return ResponseEntity.ok().build();
         }else {
@@ -72,15 +73,14 @@ public class MainController {
     @GetMapping(value={"/data/{customerId}", "/data/?language={language}"})
     public ResponseEntity<Object> getDataFromCustomer(@PathVariable(required = false) String customerId, @PathVariable(required = false) String language){
         Customer customer;
-        if (customerService.getById(customerId).isPresent()){
-            customer = customerService.getById(customerId).get();
+        List<Dialog> dialogList;
+        if (customerService.getById(customerId) != null){
+            customer = customerService.getById(customerId);
+            dialogList= dialogService.getAllByCustomerIdOrderByDateTime(customer);
+        } else if (language != null){
+            dialogList = dialogService.getAllByLanguageOrderByDateTime( Language.valueOf(language));
         } else {
             return dataAPIExceptionHandler.handlerException(HttpStatus.NOT_FOUND, "Impossible to find a customer with id=" +customerId);
-        }
-        List<Dialog> dialogList= dialogService.getAllByCustomerIdOrderByDateTime(customer);
-
-        if (language != null){
-            dialogList = dialogService.getAllByLanguageOrderByDateTime( Language.valueOf(language));
         }
         List<String> dialogListWithConsent = new ArrayList<>();
         for (Dialog d : dialogList){

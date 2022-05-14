@@ -4,8 +4,6 @@ import com.swisscom.DataAPIChallenge.model.Customer;
 import com.swisscom.DataAPIChallenge.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class CustomerService {
 
@@ -15,11 +13,19 @@ public class CustomerService {
         this.customerRepository=customerRepository;
     }
 
-    public Optional<Customer> getById(String customerId){
-        return customerRepository.findById(customerId);
+    public Customer getById(String customerId){
+        if (customerRepository.findById(customerId).isPresent()){
+            return customerRepository.findById(customerId).get();
+        }else {
+            return null;
+        }
     }
 
     public Customer save(Customer customer){
         return customerRepository.save(customer);
+    }
+
+    public void delete(Customer customer){
+        customerRepository.delete(customer);
     }
 }

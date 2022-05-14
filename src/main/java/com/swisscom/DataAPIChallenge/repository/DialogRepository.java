@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface DialogRepository extends JpaRepository<Dialog, String> {
     List<Dialog> getAllByLanguageOrderByDateTime(Language language);
-
     List<Dialog> getAllByCustomerOrderByDateTime(Customer customer);
 }

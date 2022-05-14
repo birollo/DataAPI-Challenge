@@ -2,7 +2,6 @@ package com.swisscom.DataAPIChallenge.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
